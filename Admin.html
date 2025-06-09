@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель Управления образованием Эрзинского кожууна</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, #1e90ff, #00bfff);
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .admin-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .admin-menu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .admin-btn {
+            background-color: #4682b4;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .admin-btn:hover {
+            background-color: #5f9ea0;
+        }
+        
+        .admin-btn.active {
+            background-color: #2c5282;
+        }
+        
+        .admin-section {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        
+        .admin-section.active {
+            display: block;
+        }
+        
+        h2 {
+            color: #1e90ff;
+            border-bottom: 2px solid #1e90ff;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        textarea {
+            min-height: 150px;
+        }
+        
+        .submit-btn {
+            background-color: #4682b4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background-color: #5f9ea0;
+        }
+        
+        .file-upload {
+            margin: 15px 0;
+        }
+        
+        .file-list {
+            margin-top: 10px;
+        }
+        
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .file-actions a {
+            margin-left: 10px;
+            color: #1e90ff;
+            text-decoration: none;
+}
+        
+        .file-actions a:hover {
+            text-decoration: underline;
+        }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        
+        .alert-success {
+            color: #3c763d;
+            background-color: #dff0d8;
+            border-color: #d6e9c6;
+        }
+        
+        .alert-error {
+            color: #a94442;
+            background-color: #f2dede;
+            border-color: #ebccd1;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .pagination a {
+            color: #1e90ff;
+            padding: 8px 16px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            margin: 0 4px;
+        }
+        
+        .pagination a.active {
+            background-color: #1e90ff;
+            color: white;
+            border: 1px solid #1e90ff;
+        }
+        
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab-btn {
+            padding: 10px 20px;
+            background: #f5f5f5;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        
+        .tab-btn.active {
+            background: #1e90ff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <h1>Административная панель Управления образованием Эрзинского кожууна</h1>
+    </header>
+    
+    <div class="admin-container">
+        <div class="admin-menu">
+            <button class="admin-btn" onclick="showAdminSection('dashboard')">Главная</button>
+            <button class="admin-btn" onclick="showAdminSection('content')">Контент</button>
+            <button class="admin-btn" onclick="showAdminSection('news')">Новости</button>
+            <button class="admin-btn" onclick="showAdminSection('documents')">Документы</button>
+            <button class="admin-btn" onclick="showAdminSection('users')">Пользователи</button>
+            <button class="admin-btn" onclick="showAdminSection('settings')">Настройки</button>
+            <button class="admin-btn" onclick="showAdminSection('backup')">Резервные копии</button>
+            <button class="admin-btn" onclick="logout()">Выйти</button>
+        </div>
+        
+        <!-- Главная панель -->
+        <div id="dashboard" class="admin-section active">
+            <h2>Статистика и основные показатели</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Посетители сегодня</h3>
+                    <p class="stat-value">142</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Новых документов</h3>
+                    <p class="stat-value">8</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Новых новостей</h3>
+                    <p class="stat-value">3</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Обращений</h3>
+                    <p class="stat-value">5</p>
+                </div>
+            </div>
+            
+            <h3>Последние действия</h3>
+            <table>
+                <tr>
+                    <th>Дата</th>
+                    <th>Действие</th>
+                    <th>Пользователь</th>
+</tr>
+                <tr>
+                    <td>10.01.2025 14:30</td>
+                    <td>Добавлена новость "Цифровая образовательная среда"</td>
+                    <td>admin</td>
+                </tr>
+                <tr>
+                    <td>10.01.2025 12:15</td>
+                    <td>Обновлен документ "Положение об УО"</td>
+                    <td>moderator</td>
+                </tr>
+                <tr>
+                    <td>09.01.2025 17:45</td>
+                    <td>Добавлен новый пользователь</td>
+                    <td>admin</td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- Управление контентом -->
+        <div id="content" class="admin-section">
+            <h2>Управление контентом</h2>
+            
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="showTab('pages')">Страницы</button>
+                <button class="tab-btn" onclick="showTab('sections')">Разделы</button>
+                <button class="tab-btn" onclick="showTab('menu')">Меню</button>
+            </div>
+            
+            <div id="pages" class="tab-content active">
+                <h3>Редактирование страниц</h3>
+                <table>
+                    <tr>
+                        <th>Название</th>
+                        <th>URL</th>
+                        <th>Дата изменения</th>
+                        <th>Действия</th>
+                    </tr>
+                    <tr>
+                        <td>Главная</td>
+                        <td>/main</td>
+                        <td>10.01.2025</td>
+                        <td>
+                            <a href="#">Редактировать</a>
+                            <a href="#">Просмотр</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Сведения об организации</td>
+                        <td>/about</td>
+                        <td>08.01.2025</td>
+                        <td>
+                            <a href="#">Редактировать</a>
+                            <a href="#">Просмотр</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>ГИА</td>
+                        <td>/gia</td>
+                        <td>05.01.2025</td>
+                        <td>
+                            <a href="#">Редактировать</a>
+                            <a href="#">Просмотр</a>
+                        </td>
+                    </tr>
+                </table>
+                
+                <button class="submit-btn" style="margin-top: 15px;">Добавить новую страницу</button>
+            </div>
+            
+            <div id="sections" class="tab-content">
+                <h3>Управление разделами</h3>
+                <table>
+                    <tr>
+                        <th>Название</th>
+                        <th>Родительский раздел</th>
+                        <th>Видимость</th>
+                        <th>Действия</th>
+                    </tr>
+                    <tr>
+                        <td>Основные сведения</td>
+                        <td>Сведения об организации</td>
+                        <td>Да</td>
+                        <td>
+                            <a href="#">Редактировать</a>
+                            <a href="#">Скрыть</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Руководство</td>
+                        <td>Сведения об организации</td>
+                        <td>Да</td>
+                        <td>
+                            <a href="#">Редактировать</a>
+                            <a href="#">Скрыть</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Документы</td>
+<td>Сведения об организации</td>
+                        <td>Да</td>
+                        <td>
+                            <a href="#">Редактировать</a>
+                            <a href="#">Скрыть</a>
+                        </td>
+                    </tr>
+                </table>
+                
+                <div class="form-group" style="margin-top: 20px;">
+                    <h4>Добавить новый раздел</h4>
+                    <form>
+                        <label>Название раздела:</label>
+                        <input type="text" required>
+                        
+                        <label>Родительский раздел:</label>
+                        <select>
+                            <option value="">-- Без родительского раздела --</option>
+                            <option value="1">Сведения об организации</option>
+                            <option value="2">ГИА</option>
+                            <option value="3">Механизмы управления качеством</option>
+                        </select>
+                        
+                        <label>Описание:</label>
+                        <textarea></textarea>
+                        
+                        <label>
+                            <input type="checkbox" checked> Активный
+                        </label>
+                        
+                        <button type="submit" class="submit-btn">Сохранить</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div id="menu" class="tab-content">
+                <h3>Управление меню</h3>
+                <table>
+                    <tr>
+                        <th>Пункт меню</th>
+                        <th>Ссылка</th>
+                        <th>Порядок</th>
+                        <th>Видимость</th>
+                        <th>Действия</th>
+                    </tr>
+                    <tr>
+                        <td>Главная</td>
+                        <td>/main</td>
+                        <td>1</td>
+                        <td>Да</td>
+                        <td>
+                            <a href="#">Редактировать</a>
+                            <a href="#">Вверх</a>
+                            <a href="#">Вниз</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Сведения об организации</td>
+                        <td>/about</td>
+                        <td>2</td>
+                        <td>Да</td>
+                        <td>
+                            <a href="#">Редактировать</a>
+                            <a href="#">Вверх</a>
+                            <a href="#">Вниз</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>ГИА</td>
+                        <td>/gia</td>
+                        <td>3</td>
+                        <td>Да</td>
+                        <td>
+                            <a href="#">Редактировать</a>
+                            <a href="#">Вверх</a>
+                            <a href="#">Вниз</a>
+                        </td>
+                    </tr>
+                </table>
+                
+                <div class="form-group" style="margin-top: 20px;">
+                    <h4>Добавить пункт меню</h4>
+                    <form>
+                        <label>Название:</label>
+                        <input type="text" required>
+                        
+                        <label>Ссылка:</label>
+                        <input type="text" required>
+                        
+                        <label>Порядок:</label>
+                        <input type="number" min="1" value="1">
+                        
+                        <label>
+                            <input type="checkbox" checked> Активный
+</label>
+                        
+                        <button type="submit" class="submit-btn">Сохранить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Управление новостями -->
+        <div id="news" class="admin-section">
+            <h2>Управление новостями</h2>
+            
+            <div class="alert alert-success" style="display: none;" id="news-alert">
+                Новость успешно сохранена!
+            </div>
+            
+            <button class="submit-btn" onclick="showNewsForm()">Добавить новость</button>
+            
+            <div id="news-form" style="display: none; margin-top: 20px;">
+                <form id="add-news-form">
+                    <div class="form-group">
+                        <label>Заголовок:</label>
+                        <input type="text" id="news-title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Дата:</label>
+                        <input type="date" id="news-date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Краткое описание:</label>
+                        <textarea id="news-excerpt" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Полный текст:</label>
+                        <textarea id="news-content" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Изображение:</label>
+                        <input type="file" id="news-image">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="news-active" checked> Опубликовать сразу
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Сохранить</button>
+                    <button type="button" class="submit-btn" onclick="hideNewsForm()" style="background-color: #ccc;">Отмена</button>
+                </form>
+            </div>
+            
+            <h3 style="margin-top: 30px;">Список новостей</h3>
+            <table>
+                <tr>
+                    <th>Дата</th>
+                    <th>Заголовок</th>
+                    <th>Статус</th>
+                    <th>Действия</th>
+                </tr>
+                <tr>
+                    <td>15.01.2025</td>
+                    <td>Цифровая образовательная среда: итоги внедрения</td>
+                    <td>Опубликовано</td>
+                    <td>
+                        <a href="#">Редактировать</a>
+                        <a href="#">Скрыть</a>
+                        <a href="#" style="color: #ff0000;">Удалить</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>10.01.2025</td>
+                    <td>Новые стандарты питания в школах</td>
+                    <td>Опубликовано</td>
+                    <td>
+                        <a href="#">Редактировать</a>
+                        <a href="#">Скрыть</a>
+                        <a href="#" style="color: #ff0000;">Удалить</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>05.01.2025</td>
+                    <td>Конкурс "Цифровой учитель года-2025"</td>
+                    <td>Опубликовано</td>
+                    <td>
+                        <a href="#">Редактировать</a>
+                        <a href="#">Скрыть</a>
+                        <a href="#" style="color: #ff0000;">Удалить</a>
+</td>
+                </tr>
+            </table>
+            
+            <div class="pagination">
+                <a href="#">&laquo;</a>
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">&raquo;</a>
+            </div>
+        </div>
+        
+        <!-- Управление документами -->
+        <div id="documents" class="admin-section">
+            <h2>Управление документами</h2>
+            
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="showDocTab('all')">Все документы</button>
+                <button class="tab-btn" onclick="showDocTab('federal')">Федеральные</button>
+                <button class="tab-btn" onclick="showDocTab('regional')">Региональные</button>
+                <button class="tab-btn" onclick="showDocTab('municipal')">Муниципальные</button>
+                <button class="tab-btn" onclick="showDocTab('add')">Добавить документ</button>
+            </div>
+            
+            <div id="all" class="tab-content active">
+                <h3>Все документы</h3>
+                <table>
+                    <tr>
+                        <th>Название</th>
+                        <th>Тип</th>
+                        <th>Дата</th>
+                        <th>Раздел</th>
+                        <th>Действия</th>
+                    </tr>
+                    <tr>
+                        <td>Положение-УО</td>
+                        <td>PDF</td>
+                        <td>10.01.2025</td>
+                        <td>Сведения об организации</td>
+                        <td>
+                            <a href="#">Редактировать</a>
+                            <a href="#">Удалить</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Резолюция-август-сов.2024</td>
+                        <td>PDF</td>
+                        <td>05.01.2025</td>
+                        <td>Сведения об организации</td>
+                        <td>
+                            <a href="#">Редактировать</a>
+                            <a href="#">Удалить</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>ФЗ-от-29.12.2012-№-273-ФЗ-Об-образовании-в-РФ</td>
+                        <td>PDF</td>
+                        <td>03.01.2025</td>
+                        <td>ГИА</td>
+                        <td>
+                            <a href="#">Редактировать</a>
+                            <a href="#">Удалить</a>
+                        </td>
+                    </tr>
+                </table>
+                
+                <div class="pagination">
+                    <a href="#">&laquo;</a>
+                    <a href="#" class="active">1</a>
+                    <a href="#">2</a>
+                    <a href="#">3</a>
+                    <a href="#">&raquo;</a>
+                </div>
+            </div>
+            
+            <div id="federal" class="tab-content">
+                <h3>Федеральные документы</h3>
+                <table>
+                    <tr>
+                        <th>Название</th>
+                        <th>Тип</th>
+                        <th>Дата</th>
+                        <th>Раздел</th>
+                        <th>Действия</th>
+                    </tr>
+                    <tr>
+                        <td>ФЗ-от-29.12.2012-№-273-ФЗ-Об-образовании-в-РФ</td>
+                        <td>PDF</td>
+                        <td>03.01.2025</td>
+                        <td>ГИА</td>
+                        <td>
+                            <a href="#">Редактировать</a>
+                            <a href="#">Удалить</a>
+                        </td>
+                    </tr>
+<tr>
+                        <td>ФЗ-от-06.04.2011-№-63-ФЗ-Об-электронной-подписи</td>
+                        <td>PDF</td>
+                        <td>03.01.2025</td>
+                        <td>ГИА</td>
+                        <td>
+                            <a href="#">Редактировать</a>
+                            <a href="#">Удалить</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div id="regional" class="tab-content">
+                <h3>Региональные документы</h3>
+                <table>
+                    <tr>
+                        <th>Название</th>
+                        <th>Тип</th>
+                        <th>Дата</th>
+                        <th>Раздел</th>
+                        <th>Действия</th>
+                    </tr>
+                    <tr>
+                        <td>приказ№285-д-от-27.03.24-О-правилах-заполнения-бланков-ГИА</td>
+                        <td>PDF</td>
+                        <td>03.01.2025</td>
+                        <td>ГИА</td>
+                        <td>
+                            <a href="#">Редактировать</a>
+                            <a href="#">Удалить</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div id="municipal" class="tab-content">
+                <h3>Муниципальные документы</h3>
+                <table>
+                    <tr>
+                        <th>Название</th>
+                        <th>Тип</th>
+                        <th>Дата</th>
+                        <th>Раздел</th>
+                        <th>Действия</th>
+                    </tr>
+                    <tr>
+                        <td>Постановление-адм-Эрзинского-кожууна-№43-от-22.03.2024</td>
+                        <td>PDF</td>
+                        <td>03.01.2025</td>
+                        <td>ГИА</td>
+                        <td>
+                            <a href="#">Редактировать</a>
+                            <a href="#">Удалить</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div id="add" class="tab-content">
+                <h3>Добавить новый документ</h3>
+                <form>
+                    <div class="form-group">
+                        <label>Название документа:</label>
+                        <input type="text" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Тип документа:</label>
+                        <select required>
+                            <option value="">-- Выберите тип --</option>
+                            <option value="federal">Федеральный</option>
+                            <option value="regional">Региональный</option>
+                            <option value="municipal">Муниципальный</option>
+                            <option value="other">Другой</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Раздел сайта:</label>
+                        <select required>
+                            <option value="">-- Выберите раздел --</option>
+                            <option value="about">Сведения об организации</option>
+                            <option value="gia">ГИА</option>
+                            <option value="quality">Механизмы управления качеством</option>
+                            <option value="food">Горячее питание</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Дата документа:</label>
+<input type="date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Файл документа:</label>
+                        <input type="file" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Описание (необязательно):</label>
+                        <textarea></textarea>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Загрузить документ</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Управление пользователями -->
+        <div id="users" class="admin-section">
+            <h2>Управление пользователями</h2>
+            
+            <div class="alert alert-success" style="display: none;" id="user-alert">
+                Пользователь успешно сохранен!
+            </div>
+            
+            <button class="submit-btn" onclick="showUserForm()">Добавить пользователя</button>
+            
+            <div id="user-form" style="display: none; margin-top: 20px;">
+                <form id="add-user-form">
+                    <div class="form-group">
+                        <label>ФИО:</label>
+                        <input type="text" id="user-name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Email (логин):</label>
+                        <input type="email" id="user-email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Пароль:</label>
+                        <input type="password" id="user-password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Роль:</label>
+                        <select id="user-role" required>
+                            <option value="admin">Администратор</option>
+                            <option value="editor">Редактор</option>
+                            <option value="moderator">Модератор</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Телефон:</label>
+                        <input type="tel" id="user-phone">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="user-active" checked> Активный
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Сохранить</button>
+                    <button type="button" class="submit-btn" onclick="hideUserForm()" style="background-color: #ccc;">Отмена</button>
+                </form>
+            </div>
+            
+            <h3 style="margin-top: 30px;">Список пользователей</h3>
+            <table>
+                <tr>
+                    <th>ФИО</th>
+                    <th>Email</th>
+                    <th>Роль</th>
+                    <th>Телефон</th>
+                    <th>Статус</th>
+                    <th>Действия</th>
+                </tr>
+                <tr>
+                    <td>Кур Александр Дайович</td>
+                    <td>aleksandr.kur65@mail.ru</td>
+                    <td>Администратор</td>
+                    <td>89232646401</td>
+                    <td>Активен</td>
+                    <td>
+                        <a href="#">Редактировать</a>
+                        <a href="#" style="color: #ff0000;">Удалить</a>
+                    </td>
+                </tr>
+                <tr>
+<td>Нордуп Айма Кан-ооловна</td>
+                    <td>a.nordup@mail.ru</td>
+                    <td>Редактор</td>
+                    <td>89835175869</td>
+                    <td>Активен</td>
+                    <td>
+                        <a href="#">Редактировать</a>
+                        <a href="#" style="color: #ff0000;">Удалить</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Борбак-оол Лиана Валерьевна</td>
+                    <td>sereedar.liana@mail.ru</td>
+                    <td>Модератор</td>
+                    <td>89632033655</td>
+                    <td>Активен</td>
+                    <td>
+                        <a href="#">Редактировать</a>
+                        <a href="#" style="color: #ff0000;">Удалить</a>
+                    </td>
+                </tr>
+            </table>
+            
+            <div class="pagination">
+                <a href="#">&laquo;</a>
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">&raquo;</a>
+            </div>
+        </div>
+        
+        <!-- Настройки сайта -->
+        <div id="settings" class="admin-section">
+            <h2>Настройки сайта</h2>
+            
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="showSettingsTab('general')">Основные</button>
+                <button class="tab-btn" onclick="showSettingsTab('contacts')">Контакты</button>
+                <button class="tab-btn" onclick="showSettingsTab('seo')">SEO</button>
+                <button class="tab-btn" onclick="showSettingsTab('email')">Email</button>
+            </div>
+            
+            <div id="general" class="tab-content active">
+                <form>
+                    <div class="form-group">
+                        <label>Название организации:</label>
+                        <input type="text" value="Управление образованием администрации Эрзинского кожууна Республики Тыва" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Краткое название:</label>
+                        <input type="text" value="Управление образованием Эрзинского кожууна" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Логотип:</label>
+                        <input type="file">
+                        <p>Текущий логотип: <a href="#">logo.png</a></p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Фавикон:</label>
+                        <input type="file">
+                        <p>Текущий фавикон: <a href="#">favicon.ico</a></p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Основной язык:</label>
+                        <select>
+                            <option value="ru" selected>Русский</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Сохранить настройки</button>
+                </form>
+            </div>
+            
+            <div id="contacts" class="tab-content">
+                <form>
+                    <div class="form-group">
+                        <label>Адрес:</label>
+                        <input type="text" value="668380, Республика Тыва, Эрзинский кожуун, с. Эрзин, ул. Пушкина, 33/2" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Телефон:</label>
+<input type="tel" value="8 (394-39) 22119" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" value="upr.obr.erzin@bk.ru" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Режим работы:</label>
+                        <input type="text" value="Пн-Чт с 8:30 до 17:30, Пт с 8:30 до 12:30, перерыв с 13:00 до 14:00" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Карта (iframe):</label>
+                        <textarea><iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A1234567890abcdef" width="100%" height="400" frameborder="0"></iframe></textarea>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Сохранить настройки</button>
+                </form>
+            </div>
+            
+            <div id="seo" class="tab-content">
+                <form>
+                    <div class="form-group">
+                        <label>Meta Title:</label>
+                        <input type="text" value="Управление образованием Эрзинского кожууна - 2025" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Meta Description:</label>
+                        <textarea required>Официальный сайт Управления образованием администрации Эрзинского кожууна Республики Тыва</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Meta Keywords:</label>
+                        <textarea>образование, Эрзин, кожуун, школа, детский сад</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Google Analytics ID:</label>
+                        <input type="text" placeholder="UA-XXXXX-Y">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Яндекс.Метрика ID:</label>
+                        <input type="text" placeholder="12345678">
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Сохранить настройки</button>
+                </form>
+            </div>
+            
+            <div id="email" class="tab-content">
+                <form>
+                    <div class="form-group">
+                        <label>SMTP Хост:</label>
+                        <input type="text" placeholder="smtp.example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>SMTP Порт:</label>
+                        <input type="number" placeholder="587">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>SMTP Логин:</label>
+                        <input type="text" placeholder="user@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>SMTP Пароль:</label>
+                        <input type="password">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>SMTP Шифрование:</label>
+                        <select>
+                            <option value="tls">TLS</option>
+                            <option value="ssl">SSL</option>
+                            <option value="" selected>Нет</option>
+                        </select>
+</div>
+                    
+                    <div class="form-group">
+                        <label>Email для уведомлений:</label>
+                        <input type="email" value="upr.obr.erzin@bk.ru">
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Сохранить настройки</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Резервные копии -->
+        <div id="backup" class="admin-section">
+            <h2>Управление резервными копиями</h2>
+            
+            <div class="alert alert-success" style="display: none;" id="backup-alert">
+                Резервная копия успешно создана!
+            </div>
+            
+            <div class="backup-actions">
+                <button class="submit-btn" onclick="createBackup()">Создать резервную копию</button>
+                <button class="submit-btn" style="background-color: #4CAF50;">Восстановить из копии</button>
+                <button class="submit-btn" style="background-color: #f44336;">Удалить старые копии (старше 30 дней)</button>
+            </div>
+            
+            <h3 style="margin-top: 30px;">Список резервных копий</h3>
+            <table>
+                <tr>
+                    <th>Имя файла</th>
+                    <th>Дата создания</th>
+                    <th>Размер</th>
+                    <th>Действия</th>
+                </tr>
+                <tr>
+                    <td>backup_20250110.zip</td>
+                    <td>10.01.2025 14:30</td>
+                    <td>45.7 MB</td>
+                    <td>
+                        <a href="#">Скачать</a>
+                        <a href="#">Восстановить</a>
+                        <a href="#" style="color: #ff0000;">Удалить</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>backup_20250103.zip</td>
+                    <td>03.01.2025 09:15</td>
+                    <td>44.2 MB</td>
+                    <td>
+                        <a href="#">Скачать</a>
+                        <a href="#">Восстановить</a>
+                        <a href="#" style="color: #ff0000;">Удалить</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>backup_20241227.zip</td>
+                    <td>27.12.2024 17:45</td>
+                    <td>43.8 MB</td>
+                    <td>
+                        <a href="#">Скачать</a>
+                        <a href="#">Восстановить</a>
+                        <a href="#" style="color: #ff0000;">Удалить</a>
+                    </td>
+                </tr>
+            </table>
+            
+            <div class="pagination">
+                <a href="#">&laquo;</a>
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">&raquo;</a>
+            </div>
+            
+            <div style="margin-top: 30px;">
+                <h3>Автоматическое резервное копирование</h3>
+                <form>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" checked> Включить автоматическое резервное копирование
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Частота:</label>
+                        <select>
+                            <option value="daily">Ежедневно</option>
+                            <option value="weekly" selected>Еженедельно</option>
+                            <option value="monthly">Ежемесячно</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+<label>День недели (если еженедельно):</label>
+                        <select>
+                            <option value="1">Понедельник</option>
+                            <option value="2">Вторник</option>
+                            <option value="3">Среда</option>
+                            <option value="4">Четверг</option>
+                            <option value="5" selected>Пятница</option>
+                            <option value="6">Суббота</option>
+                            <option value="0">Воскресенье</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Время:</label>
+                        <input type="time" value="23:00">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Хранить копий:</label>
+                        <input type="number" min="1" value="10">
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Сохранить настройки</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Показать/скрыть разделы админки
+        function showAdminSection(sectionId) {
+            // Скрыть все разделы
+            document.querySelectorAll('.admin-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Убрать активный класс у всех кнопок
+            document.querySelectorAll('.admin-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Показать выбранный раздел
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Сделать кнопку активной
+            event.currentTarget.classList.add('active');
+        }
+        
+        // Показать/скрыть вкладки
+        function showTab(tabId) {
+            // Скрыть все вкладки
+            const tabContents = event.currentTarget.parentElement.parentElement.querySelectorAll('.tab-content');
+            tabContents.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Убрать активный класс у всех кнопок
+            const tabButtons = event.currentTarget.parentElement.querySelectorAll('.tab-btn');
+            tabButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Показать выбранную вкладку
+            document.getElementById(tabId).classList.add('active');
+            
+            // Сделать кнопку активной
+            event.currentTarget.classList.add('active');
+        }
+        
+        // Показать/скрыть форму добавления новости
+        function showNewsForm() {
+            document.getElementById('news-form').style.display = 'block';
+        }
+        
+        function hideNewsForm() {
+            document.getElementById('news-form').style.display = 'none';
+            document.getElementById('add-news-form').reset();
+        }
+        
+        // Показать/скрыть форму добавления пользователя
+        function showUserForm() {
+            document.getElementById('user-form').style.display = 'block';
+        }
+        
+        function hideUserForm() {
+            document.getElementById('user-form').style.display = 'none';
+            document.getElementById('add-user-form').reset();
+        }
+        
+        // Создание резервной копии
+        function createBackup() {
+            const alert = document.getElementById('backup-alert');
+            alert.style.display = 'block';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+}
+        
+        // Вкладки для документов
+        function showDocTab(tabId) {
+            // Скрыть все вкладки
+            document.querySelectorAll('#documents .tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Убрать активный класс у всех кнопок
+            document.querySelectorAll('#documents .tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Показать выбранную вкладку
+            document.getElementById(tabId).classList.add('active');
+            
+            // Сделать кнопку активной
+            event.currentTarget.classList.add('active');
+        }
+        
+        // Вкладки для настроек
+        function showSettingsTab(tabId) {
+            // Скрыть все вкладки
+            document.querySelectorAll('#settings .tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Убрать активный класс у всех кнопок
+            document.querySelectorAll('#settings .tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Показать выбранную вкладку
+            document.getElementById(tabId).classList.add('active');
+            
+            // Сделать кнопку активной
+            event.currentTarget.classList.add('active');
+        }
+        
+        // Выход из системы
+        function logout() {
+            if(confirm('Вы уверены, что хотите выйти?')) {
+                window.location.href = '/login';
+            }
+        }
+    </script>
+</body>
+</html>
